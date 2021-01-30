@@ -17,6 +17,7 @@ def clean_1(l):
             if l[i][1][j] == ',':
                 l[i][1] = l[i][1][:j] + l[i][1][j+1:]
                 break
+
         l[i][1] = int(l[i][1])
     return l
     # for i in l:
@@ -29,34 +30,41 @@ def clean_1(l):
 
 def detail(link):
     import csv
-    url = "https://kpkesihatan.com/"
-    source = requests.get(url).text
-    soup = BeautifulSoup(source, 'lxml')
+    # url = "https://kpkesihatan.com/"
+    # source = requests.get(url).text
+    # soup = BeautifulSoup(source, 'lxml')
     # print(soup.prettify())
     url = link
-    # print('url',url)
-    # return
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
-    # print(soup.prettify())
-    n = soup.find_all('figure',class_='wp-block-table')
-    # for i in n[1:]:
-    #     print(i.table.tbody)
+    # n = soup.find_all('figure',class_='wp-block-table')
+    n = soup.findAll('figure')[1]
+    # print(url)
+
+    # for i in n.table.tbody:
+    #
+    #     print(i.td.strong.text)
+    # return
+
     temp = []
-    for j in n[1:]:
+    # for j in n[1:]:
+    for j in n.table.tbody:
         try:
-            tr = j.table.tbody.find_all('tr')
+            tr = j.find_all('td')
             # print(tr)
+            # return
         except:
             pass
-            print(j)
+            print('j',tr)
         else:
-            for h in tr:
-                tds = h.find_all('td')
-                temp.append([tds[0].text,tds[1].text,tds[2].text])
+            # for h in tr:
+            #     tds = h.find_all('td')
+            # temp.append([tds[0].text,tds[1].text,tds[2].text])
+            temp.append([tr[0].text,tr[1].text,tr[2].text])
     try:
         l = len(temp[0][1])
     except:
+        # print(temp)
         print('Sorry there was an error, please go to the link above.')
         return
     for i in range(l):
@@ -87,19 +95,20 @@ def Filter(INPUT,Sort=None):
     duplicates = []
     term = ''
     for i in range(0,len(strings)):
-        if strings[i].text == term:
-            duplicates.append([strings[i]['datetime'][:10],i])
+        if strings[i].text == term: # if date is equals to previous date
+            duplicates.append([strings[i]['datetime'][:10],i]) # add duplicate dates with their order according to the website
         else:
             term = strings[i].text
-        # print(strings[i]['datetime'][:10])
+        # print(strings[i]['datetime'][:10]) # list of dates
         # print(strings[i],i)
-    # print(duplicates)
+    # print(duplicates) # duplicate dates
     # print(INPUT)
+
     correct_link_id = ''
     for i in duplicates:
         if INPUT == i[0]:
             # print(INPUT,i[1])
-            correct_link_id = i[1]
+            correct_link_id = i[1] # taking the latest date
     if correct_link_id == '': # input is not one of duplicates
         for i in range(len(strings)):
             # print(strings[i]['datetime'][:10],INPUT)
@@ -119,6 +128,7 @@ def Filter(INPUT,Sort=None):
             print(INPUT,'might be too long ago and may not be available anymore. Please go to the link above for more information.')
             return
     ### end of duplicate times
+
     for i in range(0,len(strings)):
         # print(i)
         if strings[i].has_attr('datetime') and strings[i]['datetime'][:10].strip() == INPUT and i == correct_link_id:
@@ -206,16 +216,17 @@ def overview():
 print()
 print('For results today, you do not need to enter the date. Simply skip by pressing enter. For results on other days, please specify the date in the form yyyy-mm-dd.')
 print()
-ans = input('Enter date: ')
+# ans = input('Enter date: ')
+ans = '2021-01-28'
 base = date.today()
 date_list = [base - timedelta(days=x) for x in range(10)]
 
 
 def check_input(d):
     if type(d) == date:
-        if len(str(d)) == 8:
+        if len(str(d)) == 8: # yyyy-m-d
             return str(f'{d.year}-0{d.month}-0{d.day}')
-        else:
+        else: # yyyy-mm-dd
             return str(f'{d.year}-{d.month}-{d.day}')
     if len(d) == 0:
         return str(f'{date.today()}')
