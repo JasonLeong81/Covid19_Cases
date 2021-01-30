@@ -2,6 +2,12 @@ from bs4 import BeautifulSoup
 import requests
 from datetime import date,timedelta, datetime
 
+date_test = []
+today = datetime.today()
+for i in range(10):
+    date_test.append(today-timedelta(days=1))
+# DATE = '2021-01-23'
+# print(date_test)
 
 
 def clean_1(l):
@@ -38,12 +44,12 @@ def detail(link):
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
     # n = soup.find_all('figure',class_='wp-block-table')
-    n = soup.findAll('figure')[1]
+    n = soup.findAll('figure',class_='wp-block-table')[1]
     # print(url)
 
-    # for i in n.table.tbody:
-    #
-    #     print(i.td.strong.text)
+    # for i in n:
+    #     print(i)
+    # print(n.table.tbody)
     # return
 
     temp = []
@@ -216,8 +222,10 @@ def overview():
 print()
 print('For results today, you do not need to enter the date. Simply skip by pressing enter. For results on other days, please specify the date in the form yyyy-mm-dd.')
 print()
-# ans = input('Enter date: ')
-ans = '2021-01-28'
+ans = input('Enter date: ')
+# ans = DATE
+# for i in date_test:
+#     ans = f'{i.year}-{i.month}-{i.day}'
 base = date.today()
 date_list = [base - timedelta(days=x) for x in range(10)]
 
