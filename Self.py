@@ -44,7 +44,11 @@ def detail(link):
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
     # n = soup.find_all('figure',class_='wp-block-table')
-    n = soup.findAll('figure',class_='wp-block-table')[1]
+    try:
+        n = soup.findAll('figure',class_='wp-block-table')[1]
+    except:
+        print('Sorry there was an error, please go to the link above.')
+        return
     # print(url)
 
     # for i in n:
